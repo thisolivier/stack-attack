@@ -12,7 +12,7 @@ class User(models.Model):
     password = PasswordField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    objects = UserManager()
+    objects = UserManager() # Redundant
 
 class Student(models.Model):
     first_name = models.CharField(max_length=50, validators=[name_validator])

@@ -6,12 +6,45 @@
 {% endblock %}
 
 {% block content%}
-        <h1>Boo</h1>
-        <form action="/portal" method="post" class="form">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                {% buttons %}
-                        <input type="submit" class="btn btn-primary" value="login/register">
-                {% endbuttons %}
-        </form>
+        <div class="row">
+                <div class="col">
+                        {% if not form2 or not form3%}
+                        <p>Fun Fact: Those two buttons do exactly the same thing, just don't tell anyone, users can't handle the truth.</p>
+                        {% endif %}
+                        <form action="/portal{% if form2 or form3%}/register{% endif %}" method="post" class="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                {% if form2 or form3%}
+                                        <fieldset>
+                                                <legend>User Type</legend>
+                                                <div class="btn-group" data-toggle="buttons">
+                                                        <label class="btn btn-primary">
+                                                                <input type="radio" name="user_type" value="student" autocomplete="off"> Student
+                                                        </label>
+                                                        <label class="btn btn-primary">
+                                                                <input type="radio" name="user_type" value="instructor" autocomplete="off"> Instructor
+                                                        </label>
+                                                </div>
+                                        </fieldset>
+                                        <div class="instructor_form">
+                                                {% bootstrap_form form2 %}
+                                        </div>
+                                        <div class="student_form">
+                                                {% bootstrap_form form3 %}
+                                        </div>
+                                        {% buttons %}
+                                                <input type="submit" class="btn btn-warning" value="register">
+                                        {% endbuttons %}
+                                {% else %}
+                                        {% buttons %}
+                                                <input type="submit" class="btn btn-primary" value="login">
+                                                <input type="submit" class="btn btn-warning" value="register">
+                                        {% endbuttons %}
+                                {% endif %}
+                        </form>
+                </div>
+                <div class="col">
+                        
+                </div>
+        </div>
 {% endblock %}
