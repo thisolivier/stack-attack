@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from model_fields import PasswordField
-from django.core.validators import EmailValidator
+from validators import name_validator
 
 from model_managers import UserManager
 
@@ -13,3 +13,16 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     objects = UserManager()
+
+class Student(models.Model):
+    first_name = models.CharField(max_length=50, validators=[name_validator])
+    last_name = models.CharField(max_length=50, validators=[name_validator])
+    user = models.OneToOneField(User, on_delete=models.CASCADE,)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+class Instructor(models.Model):
+    name = models.CharField(max_length=80, validators=[name_validator])
+    user = models.OneToOneField(User, on_delete=models.CASCADE,)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
