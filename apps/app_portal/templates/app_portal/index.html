@@ -7,11 +7,11 @@
 
 {% block content%}
         <h1>Boo</h1>
-        <form action="/your-name/" method="post" class="form">
+        <form action="/portal" method="post" class="form">
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 {% buttons %}
-                        <input type="submit" class="btn btn-primary" value="login">
+                        <input type="submit" class="btn btn-primary" value="login/register">
                 {% endbuttons %}
         </form>
 {% endblock %}
