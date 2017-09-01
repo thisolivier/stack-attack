@@ -1,13 +1,15 @@
 from django.db import models
+from django.contrib.auth import password_validation as pass_val, hashers
+
+def validate_pword(password_string):
+    pass_val.validate_password(password=password_string)
+    return password_string
 
 def parse_word(password_string):
     # Takes a unencrypted password and encrypts it.
-    if fail:
-        
-        raise ValidationError(_('Password was too long, you may be trying to save an already encrypted password.'))
-    
-    return 
-
+    validate_pword(password_string)
+    encrypted_password = hashers.make_password(password_string)
+    return encrypted_password
 
 class PasswordField(models.Field):
     description = "An encrypted password"
@@ -28,9 +30,13 @@ class PasswordField(models.Field):
         name, path, args, kwargs = super(PasswordField, self).deconstruct()
         del kwargs["max_length"]
         return name, path, args, kwargs
+
+    def db_type(self, connection):
+        return 'char(%s)' % self.max_length
     
     """
     Since we want to just return encoded strings, we don't need this
+    
     def from_db_value(self, value, expression, connection, context):
         # Used when the value is queried from the database
         if value is None:
@@ -41,13 +47,15 @@ class PasswordField(models.Field):
     def to_python(self, value):
         # Used in forms, also known as clean()
         # When a field is initialised we may need to parse the input. 
-        # In our case we can just leave it. We could validate here, but
-        # It's not the apporiate place
-        if value is None:
-            return value
+        # In our case we can just leave it. We can validate here.
 
-        return parse_word(value)
+        # if value is None:
+        #     return value
+
+        return validate_pword(value)
 
     def get_prep_value(self, value):
         # Used to convert python objects when saving to the db
         # In our case we want to encrypt the password
+        # We also need to validate incase this isn't coming from a form
+        return parse_word(value)
