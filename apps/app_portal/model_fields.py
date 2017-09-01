@@ -1,16 +1,6 @@
 from django.db import models
 from django.contrib.auth import password_validation as pass_val, hashers
 
-def validate_pword(password_string):
-    pass_val.validate_password(password=password_string)
-    return password_string
-
-def parse_word(password_string):
-    # Takes a unencrypted password and encrypts it.
-    validate_pword(password_string)
-    encrypted_password = hashers.make_password(password_string)
-    return encrypted_password
-
 class PasswordField(models.Field):
     description = "An encrypted password"
     def __init__(self, *args, **kwargs):
@@ -33,6 +23,15 @@ class PasswordField(models.Field):
 
     def db_type(self, connection):
         return 'char(%s)' % self.max_length
+
+    def validate_pword(self, password_string):
+        pass_val.validate_password(password=password_string)
+        return password_string
+
+    def parse_word(self, password_string):
+        # Takes a unencrypted password and encrypts it.
+        encrypted_password = hashers.make_password(password_string)
+        return encrypted_password
     
     """
     Since we want to just return encoded strings, we don't need this
@@ -52,10 +51,10 @@ class PasswordField(models.Field):
         # if value is None:
         #     return value
 
-        return validate_pword(value)
+        return self.validate_pword(value)
 
     def get_prep_value(self, value):
         # Used to convert python objects when saving to the db
         # In our case we want to encrypt the password
         # We also need to validate incase this isn't coming from a form
-        return parse_word(value)
+        return self.parse_word(value)
