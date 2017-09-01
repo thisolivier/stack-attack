@@ -2,6 +2,10 @@ from django.db import models
 
 def parse_word(password_string):
     # Takes a unencrypted password and encrypts it.
+    if fail:
+        
+        raise ValidationError(_('Password was too long, you may be trying to save an already encrypted password.'))
+    
     return 
 
 
@@ -35,10 +39,15 @@ class PasswordField(models.Field):
     """
 
     def to_python(self, value):
-        # Used in forms, when a field is initialised we need
-        # To parse the input. 
-        # In our case we want to encrypt it.
+        # Used in forms, also known as clean()
+        # When a field is initialised we may need to parse the input. 
+        # In our case we can just leave it. We could validate here, but
+        # It's not the apporiate place
         if value is None:
             return value
 
         return parse_word(value)
+
+    def get_prep_value(self, value):
+        # Used to convert python objects when saving to the db
+        # In our case we want to encrypt the password
